@@ -4,6 +4,8 @@ on:
   push:
     tags:
       - "*"
+    branches:
+      - main
 
 jobs:
 
@@ -36,6 +38,7 @@ jobs:
         host: '146.190.103.98'
         username: 'root'
         password: '$Admin_1jj395qu'
+        #password: ${{ secrets.Password }}
         port: '22'
         script: |
           whoami

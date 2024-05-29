@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kornkavee-view-app-deployment
+  namespace: kornkavee-ns
+spec:
+  selector:
+    matchLabels:
+      app: frontend
+  replicas: 3 # จำนวน pod ที่ต้องการสร้าง
+  template:
+    metadata:
+      labels:
+        app: frontend
+    spec:
+      containers:
+        - name: react-app-container
+          image: example/react-app:1.0.0
+          ports:
+            - containerPort: 80
+          imagePullPolicy: IfNotPresent
+      imagePullSecrets:
+        - name: kornkavee-docker-secret
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: kornkavee-view-app-service
+  namespace: kornkavee-ns
+spec:
+  selector:
+    app: frontend
+  type: NodePort # ยังคงเป็น service ปกติ เหมือน LoadBalancer คือใช้ algorithm ชื่อว่า round-robin (default) ในการเข้าถึง Pods ต่างๆ
+  #type: ClusterIP
+  ports:
+    - port: 80
+      targetPort: 80
+      nodePort: 30001 # 30000-32767 กำหนด port ให้แต่ละ node (ทุก node จะเข้า port นี้ได้หมดผ่าน IP ของ Node)
